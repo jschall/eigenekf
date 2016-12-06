@@ -36,19 +36,36 @@ public:
             return (_y.transpose()*_S_inv*_y)[0];
         }
 
-        void commit()
+        bool commit()
         {
             compute_y();
             compute_S_inv();
             Matrix_Sx1& x = _ekf._state;
-            Matrix_SxS& P = _ekf._covariance;
+            Matrix_SxS P = _ekf._covariance;
+            const Matrix_SxS& I = Matrix_SxS::Identity();
 
             Matrix_SxO K;
             K.noalias() = P*_H.transpose()*_S_inv;
 
             // Update the state and covariance
-            x.noalias() += K*_y;
-            P = (Matrix_SxS::Identity()-K*_H)*P;
+            P = (I-K*_H)*P;
+
+            // conditioning check here
+            if (false) {
+                return false;
+            }
+
+            // Average the upper and lower diagonals
+            for (int i=0; i<P.rows(); i++) {
+                for(int j=0; j<i; j++) {
+                    P(i,j) = P(j,i) = (P(i,j)+P(j,i))/2;
+                }
+            }
+
+            _ekf._covariance = P;
+
+            _ekf._state.noalias() += K*_y;
+            return true;
         }
 
     protected:
