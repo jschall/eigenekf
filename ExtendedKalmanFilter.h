@@ -6,7 +6,12 @@ public:
     typedef Eigen::Matrix<float,N_STATES,1> Matrix_Sx1;
     typedef Eigen::Matrix<float,N_STATES,N_STATES> Matrix_SxS;
 
-    template<int N_OBS> class Observation {
+    const Matrix_Sx1& getState() { return _state; }
+    const Matrix_SxS& getCovariance() { return _covariance; }
+
+protected:
+    template<int N_OBS>
+    class Observation {
     public:
         typedef Eigen::Matrix<float,N_OBS,1> Matrix_Ox1;
         typedef Eigen::Matrix<float,N_OBS,N_OBS> Matrix_OxO;
@@ -103,10 +108,6 @@ public:
         Matrix_OxS        _H;     // Observation sensitivity matrix, dh/dx
     };
 
-    const Matrix_Sx1& getState() { return _state; }
-    const Matrix_SxS& getCovariance() { return _covariance; }
-
-protected:
     Matrix_Sx1 _state;
     Matrix_SxS _covariance;
 };
