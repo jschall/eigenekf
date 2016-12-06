@@ -6,10 +6,10 @@ int main()
 {
     BattEKF ekf;
 
-    Eigen::Matrix<float,1,1> z;
+    BattEKF::VoltageObs::z_type z;
     z << 1.0f;
 
-    Eigen::Matrix<float,1,1> R;
+    BattEKF::VoltageObs::R_type R;
     R << 0.1f;
 
     BattEKF::VoltageObs v_obs(ekf, z, R);
